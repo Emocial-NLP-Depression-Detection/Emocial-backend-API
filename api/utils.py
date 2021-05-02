@@ -81,7 +81,10 @@ def remove_stopwords(text):
 class DepressClassifier:
     def __init__(self, lang='en'):
         # for testing
-        self.df = pd.read_csv(".\data\sentiment_tweets3.csv")
+        try:
+            self.df = pd.read_csv(".\data\sentiment_tweets3.csv")
+        except FileNotFoundError:
+            self.df = pd.read_csv("..\data\sentiment_tweets3.csv")
         # self.df = pd.read_csv(".\emocial\data\sentiment_tweets3.csv")
         self.counter = counter_word(self.df.Tweets)
         self.num_unique_words = len(self.counter)
