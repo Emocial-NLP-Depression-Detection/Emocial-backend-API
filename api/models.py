@@ -18,7 +18,7 @@ class TwitterUser(models.Model):
 
 class Tweets(models.Model):
     user = models.ForeignKey(TwitterUser, on_delete=CASCADE, related_name='tweeters', default=None)
-    tweet = models.TextField(max_length=280)
+    tweet = models.TextField(max_length=280, unique=True)
     prediction_value = models.FloatField()
     prediction_date = models.DateTimeField(auto_now=True)
 
