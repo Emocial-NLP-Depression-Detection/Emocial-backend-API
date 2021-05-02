@@ -22,15 +22,11 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        cd ..
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         ls -la
-        cd data
-        ls -la
-        cd .. && cd api
-        ls -la
+        
         python manage.py migrate
     - name: Lint with flake8
       run: |
