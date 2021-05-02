@@ -16,7 +16,7 @@ def apiOverview(request):
         'Analyse': '/analyse/',
         'List': '/tweet-list/',
         'Get Tweet': '/get-tweet/<int:pk>',
-        'Get Tweets By': '/get-tweet/<str:username>'
+        'Get Tweets By': '/get-tweets-by/<str:username>'
     }
     return Response(api_urls)
 
@@ -37,7 +37,7 @@ def tweetGet(request, pk):
 
 @api_view(['GET'])
 def tweetGetBy(request, username):
-    tweets =Tweets.objects.filter(user= TwitterUser.objects.filter(twitter_username=request.data['username']).first())
+    tweets =Tweets.objects.filter(user= TwitterUser.objects.filter(twitter_username=username).first())
     serializer = TweetSerializer(tweets, many=True)
     return Response(serializer.data)
 
