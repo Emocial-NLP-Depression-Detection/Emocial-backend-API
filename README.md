@@ -134,7 +134,7 @@ Vary: Accept
 ### Analyse Someone's Twitter account
 #### Notice: If the Twitter account has never been encounter before the account will got saved to the database
 Request
-`POST /analyse/`
+`POST /analysis-account/`
 ```
 {
     "username" : "@Ginono17"
@@ -171,4 +171,32 @@ Vary: Accept
         "user": 3
     }
 ]
+```
+
+### Analyse Text
+#### Notice: Result will not get saved to database
+Request
+`POST /analysis-text/`
+```
+{
+    "message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito."
+}
+```
+
+Response
+```
+HTTP 200 OK
+Allow: POST, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+HTTP 200 OK
+Allow: POST, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "message": "@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito.",
+    "result": 0.999992847442627
+}
 ```

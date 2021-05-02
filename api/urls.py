@@ -7,6 +7,7 @@ urlpatterns = [
     path("tweet-list", views.tweetList, name="tweet-list"),
     path("get-tweet/<int:pk>", views.tweetGet, name="get-tweet"),
     path("get-tweets-by/<str:username>", views.tweetGetBy, name="get-tweets-by"),
-    path("analyse", views.analysis, name="analyse"),
+    path("analysis-account", views.analysisAccount, name="analysis-account"),
     path("gettwitter/<str:username>", views.getuser, name="get-twitter"),
+    path("analysis-text", views.analyseText, name="analysis-text"),
 ]
