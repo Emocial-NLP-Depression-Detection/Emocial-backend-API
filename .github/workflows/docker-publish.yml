@@ -35,4 +35,7 @@ jobs:
       - name: Build Container
         run: |
           docker-compose build -t Emocial/backend-api:latest
+      - name: docker push
+        run: |
+          docker push Emocial/backend-api:latest
 
