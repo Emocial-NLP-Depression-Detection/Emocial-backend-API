@@ -180,14 +180,14 @@ class DepressClassifier:
 
 
 class TweetCaller:
-    def __init__(self):
+    def __init__(self, lang):
         self.consumerkey = 'WLfzlzZ1ElU5ZlBtBpnttn1xt'
         self.consumersecret = '7RtI8JBF3aetK80Uqoil7dfMTyF5trXGQHyMKKHmSyzGXAnNO8'
         self.accesstoken = '1015944194966208512-rDnvf27WpOphOYl7yhwulKeLVncYAK'
         self.accesstokensecret = 'LOQ8x9p4hfABEQ44xfSV2vrPV7ooqMlGcI9Ld0fMjkLPO'
         self.auth = tweepy.OAuthHandler(self.consumerkey, self.consumersecret)
         self.auth.set_access_token(self.accesstoken, self.accesstokensecret)
-
+        self.lang = lang
         self.api = tweepy.API(self.auth, wait_on_rate_limit=True)
 
     def callUser(self, username):
@@ -195,7 +195,7 @@ class TweetCaller:
         try:
             self.user = self.api.get_user(self.twitterusername)
             self.posts = self.api.user_timeline(
-                screen_name=self.twitterusername, count=100, lang='en', tweet_mode='extended')
+                screen_name=self.twitterusername, count=100, lang=self.lang, tweet_mode='extended')
             self.cannotFindUser = False
         except tweepy.TweepError:
             self.cannotFindUser = True
@@ -203,9 +203,9 @@ class TweetCaller:
     def savePost(self):
         self.tweets = []
         for tweet in self.posts[0:]:
-
+            if tweet.lang == self.lang:
             # print(tweet.full_text)
-            self.tweets.append(str(tweet.full_text))
+                self.tweets.append(str(tweet.full_text))
 
         # print(self.tweets)
         return self.tweets

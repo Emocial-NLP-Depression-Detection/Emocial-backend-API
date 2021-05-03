@@ -51,7 +51,7 @@ def getuser(request, username):
 
 @api_view(['POST'])
 def analysisAccount(request):
-    twittercaller = utils.TweetCaller()
+    twittercaller = utils.TweetCaller(request.data['lang'])
     classifier.loadModel(f"./models/model-{request.data['lang']}.h5")
     print(request.data)
     twittercaller.callUser(request.data['username'])
@@ -70,12 +70,13 @@ def analysisAccount(request):
         classifier.classify(twittercaller.savePost())
         for index, row in classifier.predictedData.iterrows():
             tweets = Tweets(user = user, tweet=row['Tweet'], prediction_value=row['Prediction'])
+            
             tweets.save()
 
     tweets =Tweets.objects.filter(user= TwitterUser.objects.filter(twitter_username=request.data['username']).first())
     serializer = TweetSerializer(tweets, many=True)
     return Response(serializer.data)
-# {"username":"@17Ginono", lang:"en"}
+# {"username":"@17Ginono", "lang":"en"}
 
 @api_view(['POST'])
 def analyseText(request):
