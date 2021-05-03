@@ -137,7 +137,8 @@ Request
 `POST /analysis-account/`
 ```
 {
-    "username" : "@Ginono17"
+    "username" : "@Ginono17", 
+    "lang":"en"
 }
 ```
 
@@ -179,7 +180,7 @@ Request
 `POST /analysis-text/`
 ```
 {
-    "message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito."
+    "message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito.", "lang":"en"
 }
 ```
 

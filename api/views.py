@@ -10,7 +10,7 @@ from .serializers import TweetSerializer, TwitterUserSerializer
 from . import utils
 from api import serializers
 classifier = utils.DepressClassifier(lang='en')
-classifier.loadModel('./models/model.h5')
+
 
 @api_view(['GET'])
 def apiOverview(request):
@@ -52,7 +52,7 @@ def getuser(request, username):
 @api_view(['POST'])
 def analysisAccount(request):
     twittercaller = utils.TweetCaller()
-    
+    classifier.loadModel(f"./models/model-{request.data['lang']}.h5")
     print(request.data)
     twittercaller.callUser(request.data['username'])
     
@@ -75,14 +75,15 @@ def analysisAccount(request):
     tweets =Tweets.objects.filter(user= TwitterUser.objects.filter(twitter_username=request.data['username']).first())
     serializer = TweetSerializer(tweets, many=True)
     return Response(serializer.data)
-# {"username":"@17Ginono"}
+# {"username":"@17Ginono", lang:"en"}
 
 @api_view(['POST'])
 def analyseText(request):
+    classifier.loadModel(f"./models/model-{request.data['lang']}.h5")
     classifier.classifyText(request.data['message'])
     result = float(classifier.predict[0])
     prediction = {'message': request.data['message'],
                    'result': result}
     return Response(prediction)
 
-# {"message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito."}
+# {"message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito.", lang:"en"}

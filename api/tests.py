@@ -17,7 +17,7 @@ class GetTweetsTestCase(APITestCase):
 
 class AnalyseAccountTestCase(APITestCase):
     def test_analyse_account(self):
-        data = {"username": twitter_account}
+        data = {"username": twitter_account, "lang":"en"}
         response = self.client.post("/analysis-account", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
     
@@ -27,6 +27,7 @@ class AnalyseAccountTestCase(APITestCase):
 
 class AnalyseTextTestCase(APITestCase):
     def test_analyse_text(self):
-        data = {"message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito."}
+        data = {"message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito.", "lang":"en"}
         response = self.client.post("/analysis-text", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(round(response.data["result"]), 1)
