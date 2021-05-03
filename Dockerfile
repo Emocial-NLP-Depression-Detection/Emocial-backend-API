@@ -12,4 +12,4 @@ RUN mkdir /code
 COPY . code/
 WORKDIR /code/
 RUN /bin/bash -c "source activate ml && pip install -r requirements.txt"
-RUN python manage.py migrate
+RUN /bin/bash -c "source activate ml && python manage.py migrate"

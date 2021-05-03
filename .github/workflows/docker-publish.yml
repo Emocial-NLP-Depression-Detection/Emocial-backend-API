@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run tests
+      - name: Build Container
         run: |
-          docker-compose build
+          docker-compose build -t Emocial/backend-api:latest
 
