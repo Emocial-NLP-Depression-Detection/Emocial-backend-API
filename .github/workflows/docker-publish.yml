@@ -34,7 +34,7 @@ jobs:
 
       - name: Build Container
         run: |
-          docker build -t 56548/emocial-api:latest
+          docker build ./ -t 56548/emocial-api:latest
       - name: docker push
         run: |
           docker push 56548/emocial-api:latest
