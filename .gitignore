@@ -135,3 +135,4 @@ logs/
 tune/
 
 data\training.1600000.processed.noemoticon.csv
+.env

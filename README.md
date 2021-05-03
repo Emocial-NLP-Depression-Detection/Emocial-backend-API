@@ -133,6 +133,7 @@ Vary: Accept
 
 ### Analyse Someone's Twitter account
 #### Notice: If the Twitter account has never been encounter before the account will got saved to the database
+The lang parameter signifies both which language of the tweets to be imported and which neural network to use 
 Request
 `POST /analysis-account/`
 ```
