@@ -37,5 +37,6 @@ jobs:
           docker-compose build -t 56548/emocial-api:latest
       - name: docker push
         run: |
+          docker tag 56548/emocial-api:latest
           docker push 56548/emocial-api:latest
 
