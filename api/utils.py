@@ -128,42 +128,10 @@ class DepressClassifier:
     def decode(self, sequence):
         return " ".join([self.reverse_word_index.get(idx, "?") for idx in sequence])
 
-    def createModel(self):
-        # Word embeddings give us a way to use an efficient, dense representation in which similar words have
-        # a similar encoding. Importantly, you do not have to specify this encoding by hand. An embedding is a
-        # dense vector of floating point values (the length of the vector is a parameter you specify).
-
-        self.model = keras.models.Sequential()
-        self.model.add(layers.Embedding(self.num_unique_words,
-                                        32, input_length=self.max_length))
-
-        # The layer will take as input an integer matrix of size (batch, input_length),
-        # and the largest integer (i.e. word index) in the input should be no larger than num_words (vocabulary size).
-        # Now model.output_shape is (None, input_length, 32), where `None` is the batch dimension.
-
-        self.model.add(layers.LSTM(64, dropout=0.1))
-        self.model.add(layers.Dense(1, activation="sigmoid"))
-
-        print(self.model.summary())
-        self.loss = keras.losses.BinaryCrossentropy(from_logits=False)
-        self.optim = keras.optimizers.Adam(lr=0.001)
-        self.metrics = ["accuracy"]
-
-        self.model.compile(
-            loss=self.loss, optimizer=self.optim, metrics=self.metrics)
-
-    def trainModel(self):
-        self.initVar()
-        self.createModel()
-        self.model.fit(self.train_padded, self.train_labels, epochs=5, validation_data=(
-            self.val_padded, self.val_labels), verbose=2)
-
-        self.model.save("./ai/model.h5", include_optimizer=False)
-
     def loadModel(self, dir):
         self.model = keras.models.load_model(dir)
         self.loss = keras.losses.BinaryCrossentropy(from_logits=False)
-        self.optim = keras.optimizers.Adam(lr=0.001)
+        self.optim = keras.optimizers.Adam(lr=0.0083)
         self.metrics = ["accuracy"]
 
         self.model.compile(
