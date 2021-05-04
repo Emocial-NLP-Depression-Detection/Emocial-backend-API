@@ -272,3 +272,72 @@ Vary: Accept
     "user_permissions": []
 }
 ```
+
+
+### Register an account
+#### Notice: Token will automatically saved as cookie for later use
+`POST /login/`
+```
+{
+ "username" : "Siravit",
+ "password": "password"
+ }
+```
+
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, POST
+Content-Type: application/json
+Vary: Accept
+
+{
+    "token": "34166817967327076e79e5bfa6cfdd6c08096cc6"
+}
+```
+
+### Get logined user
+#### if the user is not login will raise a error message
+Request
+`GET /get-logined`
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 1,
+    "last_login": "2021-05-02T14:49:09.701661Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2021-05-02T12:00:10.570253Z",
+    "username": "root",
+    "email": "",
+    "password": "pbkdf2_sha256$260000$bqmbyezILn7ZIjanRCzfK8$YY9dbLAh0I3WjrKAI/2DvGqWitpneGC+Dwkk1wroDSI=",
+    "status": false,
+    "twitterAcount": null,
+    "groups": [],
+    "user_permissions": []
+}
+```
+
+### Log user out
+### Notice: Cookie will get delete as soon as this URL is fetch
+Request
+`GET /logout`
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "message": "success"
+}
+```
