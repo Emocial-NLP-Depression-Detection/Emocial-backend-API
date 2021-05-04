@@ -202,3 +202,142 @@ Vary: Accept
     "result": 0.999992847442627
 }
 ```
+
+
+### Register an account
+#### Notice: password will automaticly got hashed
+#### status: True is doctor and False is Patient
+Request
+`POST /register/`
+```
+{
+ "username" : "Gino",
+ "email" : "ginono17@example.com",
+ "password": "password",
+ "twitterAcount": "@17Ginono",
+ "status" : True
+ }
+```
+
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, POST
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 5,
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2021-05-04T14:24:07.067879Z",
+    "username": "Gino",
+    "email": "ginono17@example.com",
+    "password": "pbkdf2_sha256$260000$wxvukj70d17I1gf08U9sJf$g2zBwUINBGDyCIbrYsRcnsJh2hBBIGdaBPP2FG2kBK0=",
+    "twitterAcount": 1,
+    "groups": [],
+    "user_permissions": []
+}
+```
+
+### Get User by ID
+Request
+`GET /get-user/<int:pk>`
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 1,
+    "last_login": "2021-05-02T14:49:09.701661Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2021-05-02T12:00:10.570253Z",
+    "username": "root",
+    "email": "",
+    "password": "pbkdf2_sha256$260000$bqmbyezILn7ZIjanRCzfK8$YY9dbLAh0I3WjrKAI/2DvGqWitpneGC+Dwkk1wroDSI=",
+    "status": false,
+    "twitterAcount": null,
+    "groups": [],
+    "user_permissions": []
+}
+```
+
+
+### Register an account
+#### Notice: Token will automatically saved as cookie for later use
+`POST /login/`
+```
+{
+ "username" : "Siravit",
+ "password": "password"
+ }
+```
+
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, POST
+Content-Type: application/json
+Vary: Accept
+
+{
+    "token": "34166817967327076e79e5bfa6cfdd6c08096cc6"
+}
+```
+
+### Get logined user
+#### if the user is not login will raise a error message
+Request
+`GET /get-logined`
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 1,
+    "last_login": "2021-05-02T14:49:09.701661Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2021-05-02T12:00:10.570253Z",
+    "username": "root",
+    "email": "",
+    "password": "pbkdf2_sha256$260000$bqmbyezILn7ZIjanRCzfK8$YY9dbLAh0I3WjrKAI/2DvGqWitpneGC+Dwkk1wroDSI=",
+    "status": false,
+    "twitterAcount": null,
+    "groups": [],
+    "user_permissions": []
+}
+```
+
+### Log user out
+### Notice: Cookie will get delete as soon as this URL is fetch
+Request
+`GET /logout`
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "message": "success"
+}
+```

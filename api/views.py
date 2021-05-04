@@ -1,12 +1,17 @@
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.http import JsonResponse
-
-from rest_framework.decorators import api_view
+from django.contrib.auth.hashers import *
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from .models import *
-from .serializers import TweetSerializer, TwitterUserSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from .serializers import TweetSerializer, TwitterUserSerializer, UserSerializer
 # Create your views here.
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+import jwt, datetime
 from . import utils
 from api import serializers
 classifier = utils.DepressClassifier(lang='en')
@@ -21,6 +26,107 @@ def apiOverview(request):
         'Get Tweets By': '/get-tweets-by/<str:username>'
     }
     return Response(api_urls)
+
+
+@api_view(['POST'])
+def register(request):
+    token = request.COOKIES.get("token")
+    if token:
+        raise AuthenticationFailed("User already logined")
+    if TwitterUser.objects.filter(twitter_username=request.data['twitterAcount']).exists():
+        data = request.data
+        user = TwitterUser.objects.get(twitter_username=request.data['twitterAcount'])
+        print(data)
+        password = make_password(request.data["password"])
+        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=user, status=request.data["status"])
+        if User.objects.filter(username=user.username).exists():
+            return Response({"user_already_exit":True})
+        else:
+            
+            user.save()
+            serializer = UserSerializer(user)
+            token = Token.objects.get(user=user).key
+            data = serializer.data
+            data["token"] = token
+            return Response(data)
+    else:
+        twittercaller = utils.TweetCaller('en')
+        twittercaller.callUser(request.data['twitterAcount'])
+    
+        profile_name = twittercaller.user.name
+        profile_handle = twittercaller.twitterusername
+        profile_pic = twittercaller.user.profile_image_url
+        twitter_user = TwitterUser(profile_name=profile_name, twitter_username=profile_handle, profile=profile_pic)
+        twitter_user.save()
+        password = make_password(request.data["password"])
+        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=twitter_user, status=request.data["status"])
+        if User.objects.filter(username=user.username).exists():
+            return Response({"user_already_exit":True})
+        else:
+            user.save()
+            serializer = UserSerializer(user)
+            token = Token.objects.get(user=user).key
+            data = serializer.data
+            data["token"] = token
+            return Response(data)
+# {
+# "username" : "Ginono17",
+# "email" : "ginono17@example.com",
+# "password": "password",
+# "twitterAcount": "@17Ginono"
+# }
+@api_view(['POST'])
+def login(request):
+    username = request.data["username"]
+    password = request.data["password"]
+
+    user = User.objects.filter(username=username).first()
+    if user is None:
+        raise AuthenticationFailed("User not Found")
+    
+    if not user.check_password(password):
+        raise AuthenticationFailed("Incorrect Password")
+    token = Token.objects.get(user=user).key
+    response = Response()
+    response.set_cookie(key="token", value=token, httponly=True)
+    response.data = {
+        "token" : token
+    }
+    return response
+
+# {
+# "username":"Siravit",
+# "password":"password"
+# }
+
+@api_view(['GET'])
+def get_user(request, pk):
+    user = User.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_logined_user(request):
+    token = request.COOKIES.get("token")
+    if not token:
+        raise AuthenticationFailed("Unauthenticated")
+    
+    
+    user = Token.objects.get(key=token).user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def logout(request):
+    token = request.COOKIES.get("token")
+    if not token:
+        raise AuthenticationFailed("Unauthenticated")
+    response = Response()
+    response.delete_cookie("token")
+    response.data = {
+        "message" : "success"
+    }
+    return response
 
 
 @api_view(['GET'])

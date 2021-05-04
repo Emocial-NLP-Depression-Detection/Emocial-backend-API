@@ -1,14 +1,17 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.contrib.auth.models import AbstractUser
+
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 # Create your models here.
 
-class User(AbstractUser):
-    pass
+
 
 
 class TwitterUser(models.Model):
-    account = models.ForeignKey(User, on_delete=CASCADE, related_name="TwitterAcount", null=True, default=None)
     profile_name = models.CharField(max_length=50)
     twitter_username = models.CharField(max_length=15)
     profile = models.URLField(max_length=128, unique=True)
@@ -26,4 +29,16 @@ class Tweets(models.Model):
         return f'{self.tweet} by {self.user.twitter_username} : {self.prediction_value}'
 
 
-    
+class User(AbstractUser):
+    username = models.CharField(max_length=64, unique=True)
+    email = models.EmailField()
+    password = models.CharField(max_length=64)
+    twitterAcount = models.ForeignKey(TwitterUser, on_delete=CASCADE, related_name="user", null=True, default=None)
+    status = models.BooleanField(choices=((True, 'Doctor'), (False, 'Patient')), default=False)
+    name = None
+    NAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
