@@ -29,6 +29,7 @@ class User(AbstractUser):
     email = models.EmailField()
     password = models.CharField(max_length=64)
     twitterAcount = models.ForeignKey(TwitterUser, on_delete=CASCADE, related_name="user", null=True, default=None)
+    status = models.BooleanField(choices=((True, 'Doctor'), (False, 'Patient')), default=False)
     name = None
     NAME_FIELD = 'username'
     REQUIRED_FIELDS = []

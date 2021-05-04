@@ -11,4 +11,5 @@ urlpatterns = [
     path("gettwitter/<str:username>", views.getuser, name="get-twitter"),
     path("analysis-text", views.analyseText, name="analysis-text"),
     path("register", views.register, name="register"),
+    path("get-user/<int:pk>", views.get_user, name="get-user"),
 ]

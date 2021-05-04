@@ -30,7 +30,7 @@ def register(request):
         user = TwitterUser.objects.get(twitter_username=request.data['twitterAcount'])
         print(data)
         password = make_password(request.data["password"])
-        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=user)
+        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=user, status=request.data["status"])
         if User.objects.filter(username=user.username).exists():
             return Response({"user_already_exit":True})
         else:
@@ -48,7 +48,7 @@ def register(request):
         twitter_user = TwitterUser(profile_name=profile_name, twitter_username=profile_handle, profile=profile_pic)
         twitter_user.save()
         password = make_password(request.data["password"])
-        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=twitter_user)
+        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=twitter_user, status=request.data["status"])
         if User.objects.filter(username=user.username).exists():
             return Response({"user_already_exit":True})
         else:
@@ -61,7 +61,11 @@ def register(request):
 # "password": "password",
 # "twitterAcount": "@17Ginono"
 # }
-
+@api_view(['GET'])
+def get_user(request, pk):
+    user = User.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def tweetList(request):

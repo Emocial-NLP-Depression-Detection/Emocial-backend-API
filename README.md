@@ -206,6 +206,7 @@ Vary: Accept
 
 ### Register an account
 #### Notice: password will automaticly got hashed
+#### status: True is doctor and False is Patient
 Request
 `POST /register/`
 ```
@@ -213,7 +214,8 @@ Request
  "username" : "Gino",
  "email" : "ginono17@example.com",
  "password": "password",
- "twitterAcount": "@17Ginono"
+ "twitterAcount": "@17Ginono",
+ "status" : True
  }
 ```
 
@@ -242,3 +244,31 @@ Vary: Accept
 }
 ```
 
+### Get User by ID
+Request
+`GET /get-user/<int:pk>`
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, GET
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 1,
+    "last_login": "2021-05-02T14:49:09.701661Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2021-05-02T12:00:10.570253Z",
+    "username": "root",
+    "email": "",
+    "password": "pbkdf2_sha256$260000$bqmbyezILn7ZIjanRCzfK8$YY9dbLAh0I3WjrKAI/2DvGqWitpneGC+Dwkk1wroDSI=",
+    "status": false,
+    "twitterAcount": null,
+    "groups": [],
+    "user_permissions": []
+}
+```
