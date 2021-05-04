@@ -1,11 +1,11 @@
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.http import JsonResponse
-
+from django.contrib.auth.hashers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import *
-from .serializers import TweetSerializer, TwitterUserSerializer
+from .serializers import TweetSerializer, TwitterUserSerializer, UserSerializer
 # Create your views here.
 from . import utils
 from api import serializers
@@ -21,6 +21,46 @@ def apiOverview(request):
         'Get Tweets By': '/get-tweets-by/<str:username>'
     }
     return Response(api_urls)
+
+
+@api_view(['POST'])
+def register(request):
+    if TwitterUser.objects.filter(twitter_username=request.data['twitterAcount']).exists():
+        data = request.data
+        user = TwitterUser.objects.get(twitter_username=request.data['twitterAcount'])
+        print(data)
+        password = make_password(request.data["password"])
+        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=user)
+        if User.objects.filter(username=user.username).exists():
+            return Response({"user_already_exit":True})
+        else:
+            
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+    else:
+        twittercaller = utils.TweetCaller('en')
+        twittercaller.callUser(request.data['twitterAcount'])
+    
+        profile_name = twittercaller.user.name
+        profile_handle = twittercaller.twitterusername
+        profile_pic = twittercaller.user.profile_image_url
+        twitter_user = TwitterUser(profile_name=profile_name, twitter_username=profile_handle, profile=profile_pic)
+        twitter_user.save()
+        password = make_password(request.data["password"])
+        user = User(username=request.data["username"], email=request.data["email"], password=password, twitterAcount=twitter_user)
+        if User.objects.filter(username=user.username).exists():
+            return Response({"user_already_exit":True})
+        else:
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+# {
+# "username" : "Ginono17",
+# "email" : "ginono17@example.com",
+# "password": "password",
+# "twitterAcount": "@17Ginono"
+# }
 
 
 @api_view(['GET'])

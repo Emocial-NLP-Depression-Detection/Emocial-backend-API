@@ -202,3 +202,43 @@ Vary: Accept
     "result": 0.999992847442627
 }
 ```
+
+
+### Register an account
+#### Notice: password will automaticly got hashed
+Request
+`POST /register/`
+```
+{
+ "username" : "Gino",
+ "email" : "ginono17@example.com",
+ "password": "password",
+ "twitterAcount": "@17Ginono"
+ }
+```
+
+Response
+```
+HTTP 200 OK
+Allow: OPTIONS, POST
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 5,
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2021-05-04T14:24:07.067879Z",
+    "username": "Gino",
+    "email": "ginono17@example.com",
+    "password": "pbkdf2_sha256$260000$wxvukj70d17I1gf08U9sJf$g2zBwUINBGDyCIbrYsRcnsJh2hBBIGdaBPP2FG2kBK0=",
+    "twitterAcount": 1,
+    "groups": [],
+    "user_permissions": []
+}
+```
+
