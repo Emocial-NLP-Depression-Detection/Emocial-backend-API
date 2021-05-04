@@ -31,3 +31,45 @@ class AnalyseTextTestCase(APITestCase):
         response = self.client.post("/analysis-text", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(round(response.data["result"]), 1)
+
+class AuthenticationTestCase(APITestCase):
+    
+    def test_register(self):
+        data = {
+            "username" : "Gino",
+            "email" : "ginono17@example.com",
+            "password": "password",
+            "twitterAcount": "@17Ginono",
+            "status" : True
+            }
+        response = self.client.post("/register", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "Gino")
+
+    
+        data = {
+                "username" : "Gino",
+                "password": "password"
+                }
+        response = self.client.post("/login", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["token"], response.cookies["token"].value)
+
+        data = {
+            "username" : "Gino",
+            "email" : "ginono17@example.com",
+            "password": "password",
+            "twitterAcount": "@17Ginono",
+            "status" : True
+            }
+        response = self.client.post("/register", data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["detail"], "User already logined")
+
+        response = self.client.get("/get-logined")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "Gino")
+
+        response = self.client.get("/logout")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["message"], "success")
