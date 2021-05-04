@@ -24,6 +24,14 @@ class AnalyseAccountTestCase(APITestCase):
         response = self.client.get(f"/gettwitter/{twitter_account}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["twitter_username"], twitter_account)
+    def test_account_not_exit(self):
+        data = {
+                    "username" : "@Ginono17525", 
+                    "lang":"en"
+                }
+        response = self.client.post("/analysis-account", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["messsage"], "Account not found")
 
 class AnalyseTextTestCase(APITestCase):
     def test_analyse_text(self):

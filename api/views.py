@@ -160,6 +160,10 @@ def analysisAccount(request):
     classifier.loadModel(f"./models/model-{request.data['lang']}.h5")
     print(request.data)
     twittercaller.callUser(request.data['username'])
+    if twittercaller.cannotFindUser:
+        return Response({
+            "messsage": "Account not found"
+        })
     
     profile_name = twittercaller.user.name
     profile_handle = twittercaller.twitterusername

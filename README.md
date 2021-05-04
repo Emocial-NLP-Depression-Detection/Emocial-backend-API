@@ -175,6 +175,18 @@ Vary: Accept
 ]
 ```
 
+If account not found will will return message saying account not found
+```
+HTTP 200 OK
+Allow: POST, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "messsage": "Account not found"
+}
+
+```
 ### Analyse Text
 #### Notice: Result will not get saved to database
 Request
