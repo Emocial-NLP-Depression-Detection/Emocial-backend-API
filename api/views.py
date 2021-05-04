@@ -11,7 +11,6 @@ from .serializers import TweetSerializer, TwitterUserSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-import jwt, datetime
 from . import utils
 from api import serializers
 classifier = utils.DepressClassifier(lang='en')
