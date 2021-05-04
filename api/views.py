@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import TweetSerializer, TwitterUserSerializer, UserSerializer
 # Create your views here.
+from rest_framework.authtoken.models import Token
+
 from . import utils
 from api import serializers
 classifier = utils.DepressClassifier(lang='en')
@@ -37,7 +39,10 @@ def register(request):
             
             user.save()
             serializer = UserSerializer(user)
-            return Response(serializer.data)
+            token = Token.objects.get(user=user).key
+            data = serializer.data
+            data["token"] = token
+            return Response(data)
     else:
         twittercaller = utils.TweetCaller('en')
         twittercaller.callUser(request.data['twitterAcount'])
@@ -54,7 +59,10 @@ def register(request):
         else:
             user.save()
             serializer = UserSerializer(user)
-            return Response(serializer.data)
+            token = Token.objects.get(user=user).key
+            data = serializer.data
+            data["token"] = token
+            return Response(data)
 # {
 # "username" : "Ginono17",
 # "email" : "ginono17@example.com",
