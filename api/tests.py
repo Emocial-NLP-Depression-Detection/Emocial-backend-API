@@ -16,7 +16,7 @@ class GetTweetsTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 class AnalyseAccountTestCase(APITestCase):
-    def test_analyse_account(self):
+    def test_analyse_english_account(self):
         data = {"username": twitter_account, "lang":"en"}
         response = self.client.post("/analysis-account", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -24,6 +24,16 @@ class AnalyseAccountTestCase(APITestCase):
         response = self.client.get(f"/gettwitter/{twitter_account}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["twitter_username"], twitter_account)
+    
+    def test_analyse_thai_account(self):
+        data = {"username": "@prayutofficial", "lang":"th"}
+        response = self.client.post("/analysis-account", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+        response = self.client.get(f"/gettwitter/@prayutofficial")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["twitter_username"], "@prayutofficial")
+
     def test_account_not_exit(self):
         data = {
                     "username" : "@Ginono17525", 
@@ -34,8 +44,13 @@ class AnalyseAccountTestCase(APITestCase):
         self.assertEqual(response.data["messsage"], "Account not found")
 
 class AnalyseTextTestCase(APITestCase):
-    def test_analyse_text(self):
+    def test_analyse_english_text(self):
         data = {"message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito.", "lang":"en"}
+        response = self.client.post("/analysis-text", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(round(response.data["result"]), 1)
+    def test_analyse_thai_text(self):
+        data = {"message":"เครียดเรื่องฝึกงาน เครียดเรื่องครอบครัวที่เราต้องแบกรับทุกอย่าง มันโคตรแย่เลย", "lang":"th"}
         response = self.client.post("/analysis-text", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(round(response.data["result"]), 1)
