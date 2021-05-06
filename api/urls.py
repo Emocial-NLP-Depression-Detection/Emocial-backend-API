@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 from . import views
-
+from . import utils
 urlpatterns = [
     path("", views.apiOverview, name="api-overview"),
     path("tweet-list", views.tweetList, name="tweet-list"),
@@ -16,3 +16,6 @@ urlpatterns = [
     path("get-logined", views.get_logined_user, name="get-logined-user"),
     path("logout", views.logout, name="logout")
 ]
+
+en_classifier = utils.DepressClassifier("en")
+th_classifier = utils.DepressClassifier("th")

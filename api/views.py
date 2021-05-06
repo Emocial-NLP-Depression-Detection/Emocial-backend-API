@@ -12,9 +12,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from . import utils
-from api import serializers
 
+from api.apps import en_classifier, th_classifier
 
+    
 
 @api_view(['GET'])
 def apiOverview(request):
@@ -156,7 +157,10 @@ def getuser(request, username):
 
 @api_view(['POST'])
 def analysisAccount(request):
-    classifier = utils.DepressClassifier(request.data['lang'])
+    if request.data['lang'] =="en":
+        classifier = en_classifier
+    else:
+        classifier = th_classifier
     twittercaller = utils.TweetCaller(request.data['lang'])
     print(request.data)
     twittercaller.callUser(request.data['username'])
@@ -189,7 +193,10 @@ def analysisAccount(request):
 
 @api_view(['POST'])
 def analyseText(request):
-    classifier = utils.DepressClassifier(request.data['lang'])
+    if request.data['lang'] =="en":
+        classifier = en_classifier
+    else:
+        classifier = th_classifier
     classifier.classifyText(request.data['message'])
     result = float(classifier.predict[0])
     prediction = {'message': request.data['message'],

@@ -21,6 +21,7 @@ from nltk.corpus import stopwords
 from pythainlp.corpus import stopwords as stopwords_th
 from pythainlp.tokenize import word_tokenize
 
+
 def init():
     nltk.download('punkt')
 
@@ -52,14 +53,6 @@ def cleanTxt(txt):
     return txt
 
 
-def counter_word(text_col):
-    count = Counter()
-    for text in text_col.values:
-        for word in text.split():
-            count[word] += 1
-    return count
-
-
 def remove_URL(text):
     url = re.compile(r"https?://\S+|www\.\S+")
     return url.sub(r"", text)
@@ -72,25 +65,24 @@ def remove_punct(text):
     return text.translate(translator)
 
 
-
-
-
 class DepressClassifier:
     def __init__(self, lang):
         # for testing
         self.lang = lang
+        print(f"Importing {self.lang} data...")
         self.df = pd.read_csv(f"./data/data-{self.lang}.csv")
         self.df = self.df.sort_values(by=['label'])
+        print("Finish Importing data.")
         # self.df = pd.read_csv(".\emocial\data\sentiment_tweets3.csv")
-        
-        
 
-    def initVar(self):
+        print(f"Cleaning {self.lang} dataset...")
         self.df["Tweets"] = self.df.Tweets.map(
             remove_URL)  # map(lambda x: remove_URL(x))
         self.df["Tweets"] = self.df.Tweets.map(remove_punct)
         self.df["Tweets"] = self.df.Tweets.map(self.remove_stopwords)
-        self.counter = counter_word(self.df.Tweets)
+        print(f"Done cleaning {self.lang} data.")
+        
+        self.counter = self.counter_word(self.df.Tweets)
         self.num_unique_words = len(self.counter)
         # Split dataset into training and validation set
         self.train_size = int(self.df.shape[0] * 0.8)
@@ -98,7 +90,7 @@ class DepressClassifier:
         self.train_df = self.df[:self.train_size]
         self.val_df = self.df[self.train_size:]
 
-        # split text and labels
+        # # split text and labels
         self.train_sentences = self.train_df.Tweets.to_numpy()
         self.train_labels = self.train_df.label.to_numpy()
         self.val_sentences = self.val_df.Tweets.to_numpy()
@@ -106,17 +98,17 @@ class DepressClassifier:
         self.tokenizer.fit_on_texts(
             self.train_sentences)  # fit only to training
         self.word_index = self.tokenizer.word_index
-        self.train_sequences = self.tokenizer.texts_to_sequences(
-            self.train_sentences)
-        self.val_sequences = self.tokenizer.texts_to_sequences(
-            self.val_sentences)
+        # self.train_sequences = self.tokenizer.texts_to_sequences(
+        #     self.train_sentences)
+        # self.val_sequences = self.tokenizer.texts_to_sequences(
+        #     self.val_sentences)
 
         self.max_length = 20
 
-        self.train_padded = pad_sequences(
-            self.train_sequences, maxlen=self.max_length, padding="post", truncating="post")
-        self.val_padded = pad_sequences(
-            self.val_sequences, maxlen=self.max_length, padding="post", truncating="post")
+        # self.train_padded = pad_sequences(
+        #     self.train_sequences, maxlen=self.max_length, padding="post", truncating="post")
+        # self.val_padded = pad_sequences(
+        #     self.val_sequences, maxlen=self.max_length, padding="post", truncating="post")
 
     def counter_word(self, text_col):
         count = Counter()
@@ -136,14 +128,13 @@ class DepressClassifier:
         if self.lang == "en":
             stop = set(stopwords.words("english"))
             filtered_words = [word.lower()
-                        for word in text.split() if word.lower() not in stop]
+                              for word in text.split() if word.lower() not in stop]
         if self.lang == "th":
             stop = stopwords_th.words("thai")
             filtered_words = [word.lower()
-                        for word in word_tokenize(text) if word.lower() not in stop]
-        
-        return " ".join(filtered_words)
+                              for word in word_tokenize(text) if word.lower() not in stop]
 
+        return " ".join(filtered_words)
 
     def decode(self, sequence):
         return " ".join([self.reverse_word_index.get(idx, "?") for idx in sequence])
@@ -169,7 +160,7 @@ class DepressClassifier:
         return encoded
 
     def classify(self, list):
-        self.initVar()
+        
         self.loadModel()
         self.predictedData = pd.DataFrame([])
         for line in list:
@@ -187,7 +178,7 @@ class DepressClassifier:
                 {'Tweet': line, 'Prediction': int(round(float(self.predict[0])))}, ignore_index=True)
 
     def classifyText(self, text):
-        self.initVar()
+        
         self.loadModel()
         nline = text.replace(",", "").replace(".", "").replace("(", "").replace(
             ")", "").replace(":", "").replace("\"", "").strip().split(" ")
@@ -226,7 +217,7 @@ class TweetCaller:
         self.tweets = []
         for tweet in self.posts[0:]:
             if tweet.lang == self.lang:
-            # print(tweet.full_text)
+                # print(tweet.full_text)
                 self.tweets.append(str(tweet.full_text))
 
         # print(self.tweets)
