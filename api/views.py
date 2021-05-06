@@ -13,7 +13,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from . import utils
 from api import serializers
-classifier = utils.DepressClassifier(lang='en')
+
 
 
 @api_view(['GET'])
@@ -156,8 +156,8 @@ def getuser(request, username):
 
 @api_view(['POST'])
 def analysisAccount(request):
+    classifier = utils.DepressClassifier(request.data['lang'])
     twittercaller = utils.TweetCaller(request.data['lang'])
-    classifier.loadModel(f"./models/model-{request.data['lang']}.h5")
     print(request.data)
     twittercaller.callUser(request.data['username'])
     if twittercaller.cannotFindUser:
@@ -189,7 +189,7 @@ def analysisAccount(request):
 
 @api_view(['POST'])
 def analyseText(request):
-    classifier.loadModel(f"./models/model-{request.data['lang']}.h5")
+    classifier = utils.DepressClassifier(request.data['lang'])
     classifier.classifyText(request.data['message'])
     result = float(classifier.predict[0])
     prediction = {'message': request.data['message'],

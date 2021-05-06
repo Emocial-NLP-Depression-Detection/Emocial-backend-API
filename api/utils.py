@@ -18,7 +18,8 @@ import nltk
 import re
 import pandas as pd
 from nltk.corpus import stopwords
-
+from pythainlp.corpus import stopwords as stopwords_th
+from pythainlp.tokenize import word_tokenize
 
 def init():
     nltk.download('punkt')
@@ -35,7 +36,7 @@ nltk.download('stopwords')
 def loaddata():
 
     # load dataset
-    filename = './data/sentiment_tweets3.csv'
+    filename = './data/data-{}.csv'
     dataframe = pd.read_csv(filename)
     array = dataframe.values
     X = array[:, 0:2]
@@ -71,26 +72,24 @@ def remove_punct(text):
     return text.translate(translator)
 
 
-def remove_stopwords(text):
-    stop = set(stopwords.words("english"))
-    filtered_words = [word.lower()
-                      for word in text.split() if word.lower() not in stop]
-    return " ".join(filtered_words)
+
 
 
 class DepressClassifier:
-    def __init__(self, lang='en'):
+    def __init__(self, lang):
         # for testing
-        
-        self.df = pd.read_csv("./data/sentiment_tweets3.csv")
-        
-        # self.df = pd.read_csv(".\emocial\data\sentiment_tweets3.csv")
-        self.counter = counter_word(self.df.Tweets)
-        self.num_unique_words = len(self.counter)
         self.lang = lang
+        self.df = pd.read_csv(f"./data/data-{self.lang}.csv")
+        self.df = self.df.sort_values(by=['label'])
+        # self.df = pd.read_csv(".\emocial\data\sentiment_tweets3.csv")
+        
+        
 
     def initVar(self):
-        self.cleanDF()
+        self.df["Tweets"] = self.df.Tweets.map(
+            remove_URL)  # map(lambda x: remove_URL(x))
+        self.df["Tweets"] = self.df.Tweets.map(remove_punct)
+        self.df["Tweets"] = self.df.Tweets.map(self.remove_stopwords)
         self.counter = counter_word(self.df.Tweets)
         self.num_unique_words = len(self.counter)
         # Split dataset into training and validation set
@@ -119,17 +118,38 @@ class DepressClassifier:
         self.val_padded = pad_sequences(
             self.val_sequences, maxlen=self.max_length, padding="post", truncating="post")
 
-    def cleanDF(self):
-        self.df["Tweets"] = self.df.Tweets.map(
-            remove_URL)  # map(lambda x: remove_URL(x))
-        self.df["Tweets"] = self.df.Tweets.map(remove_punct)
-        self.df["Tweets"] = self.df.Tweets.map(remove_stopwords)
+    def counter_word(self, text_col):
+        count = Counter()
+        if self.lang == 'en':
+            for text in text_col.values:
+                for word in text.split():
+                    count[word] += 1
+            return count
+        else:
+            for text in text_col.values:
+                for word in word_tokenize(text):
+                    if word != ' ':
+                        count[word] += 1
+            return count
+
+    def remove_stopwords(self, text):
+        if self.lang == "en":
+            stop = set(stopwords.words("english"))
+            filtered_words = [word.lower()
+                        for word in text.split() if word.lower() not in stop]
+        if self.lang == "th":
+            stop = stopwords_th.words("thai")
+            filtered_words = [word.lower()
+                        for word in word_tokenize(text) if word.lower() not in stop]
+        
+        return " ".join(filtered_words)
+
 
     def decode(self, sequence):
         return " ".join([self.reverse_word_index.get(idx, "?") for idx in sequence])
 
-    def loadModel(self, dir):
-        self.model = keras.models.load_model(dir)
+    def loadModel(self):
+        self.model = keras.models.load_model(f"./models/model-{self.lang}.h5")
         self.loss = keras.losses.BinaryCrossentropy(from_logits=False)
         self.optim = keras.optimizers.Adam(lr=0.0083)
         self.metrics = ["accuracy"]
@@ -150,6 +170,7 @@ class DepressClassifier:
 
     def classify(self, list):
         self.initVar()
+        self.loadModel()
         self.predictedData = pd.DataFrame([])
         for line in list:
             nline = line.replace(",", "").replace(".", "").replace("(", "").replace(
@@ -167,6 +188,7 @@ class DepressClassifier:
 
     def classifyText(self, text):
         self.initVar()
+        self.loadModel()
         nline = text.replace(",", "").replace(".", "").replace("(", "").replace(
             ")", "").replace(":", "").replace("\"", "").strip().split(" ")
         self.encode = self.review_encode(nline)

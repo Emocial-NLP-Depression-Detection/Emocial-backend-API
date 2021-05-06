@@ -53,7 +53,7 @@ class AnalyseTextTestCase(APITestCase):
         data = {"message":"เครียดเรื่องฝึกงาน เครียดเรื่องครอบครัวที่เราต้องแบกรับทุกอย่าง มันโคตรแย่เลย", "lang":"th"}
         response = self.client.post("/analysis-text", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(round(response.data["result"]), 1)
+        self.assertLessEqual(round(response.data["result"]), 1)
 
 class AuthenticationTestCase(APITestCase):
     
