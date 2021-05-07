@@ -286,7 +286,7 @@ Vary: Accept
 ```
 
 
-### Register an account
+### login to an account
 #### Notice: Token will automatically saved as cookie for later use
 `POST /login/`
 ```

@@ -17,5 +17,3 @@ urlpatterns = [
     path("logout", views.logout, name="logout")
 ]
 
-en_classifier = utils.DepressClassifier("en")
-th_classifier = utils.DepressClassifier("th")

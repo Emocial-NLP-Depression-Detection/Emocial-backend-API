@@ -13,9 +13,9 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from . import utils
 
-from api.apps import en_classifier, th_classifier
 
-    
+en_classifier = utils.DepressClassifier("en")
+th_classifier = utils.DepressClassifier("th")
 
 @api_view(['GET'])
 def apiOverview(request):
