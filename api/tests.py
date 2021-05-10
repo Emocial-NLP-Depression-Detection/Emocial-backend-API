@@ -96,3 +96,36 @@ class AuthenticationTestCase(APITestCase):
         response = self.client.get("/logout")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["message"], "success")
+
+
+class QuestionaireTestCase(APITestCase):
+    def test_logined_anwser(self):
+        data = {
+            "username" : "Gino",
+            "email" : "ginono17@example.com",
+            "password": "password",
+            "twitterAcount": "@17Ginono",
+            "status" : True
+            }
+        response = self.client.post("/register", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "Gino")
+
+        data = {
+                "username" : "Gino",
+                "password": "password"
+                }
+        response = self.client.post("/login", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["token"], response.cookies["token"].value)
+
+        data = {"q1": "man", "q2":"woman", "lang":"en"}
+        response = self.client.post("/analyse-question", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["user"], 1)
+
+    def test_not_login_answer(self):
+        data = {"q1": "man", "q2":"woman", "lang":"en"}
+        response = self.client.post("/analyse-question", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["q1"], "man")

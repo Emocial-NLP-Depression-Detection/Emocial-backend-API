@@ -6,12 +6,13 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from .models import *
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import TweetSerializer, TwitterUserSerializer, UserSerializer
+from .serializers import TweetSerializer, TwitterUserSerializer, UserSerializer, QuestionaireSerializer
 # Create your views here.
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from . import utils
+from api import serializers
 
 
 en_classifier = utils.DepressClassifier("en")
@@ -204,3 +205,41 @@ def analyseText(request):
     return Response(prediction)
 
 # {"message":"@jnnybllstrs Dnt joke about these things, anak. Death & depression destroy lives, we shldnt wish for or joke about them. Let's hope fake news ito.", lang:"en"}
+
+@api_view(['POST'])
+def analyseQuestion(request):
+    if request.data['lang'] =="en":
+        classifier = en_classifier
+    else:
+        classifier = th_classifier
+    q1 = request.data['q1']
+    classifier.classifyText(q1)
+    prediction1 = float(classifier.predict[0])
+
+    q2 = request.data['q2']
+    classifier.classifyText(q2)
+    prediction2 = float(classifier.predict[0])
+    mean = (prediction1+prediction2)/2
+    token = request.COOKIES.get("token")
+    if token:
+        user = Token.objects.get(key = token).user
+        result = Questionaire(user=user, q1 = q1, prediction1=prediction1, q2=q2, prediction2=prediction2, mean=mean)
+        result.save()
+        serializer = QuestionaireSerializer(result, many=False)
+        return Response(serializer.data)
+    else:
+        result = {
+            "q1":q1,
+            "prediction1": prediction1,
+            "q2":q2,
+            "prediction2": prediction2,
+            "mean": mean
+        }
+        return Response(result)
+
+
+
+
+
+
+# {"q1": "man", "q2":"woman", "lang":"en"}

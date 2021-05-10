@@ -41,4 +41,14 @@ class User(AbstractUser):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
-        Token.objects.create(user=instance)
+        Token.objects.create(user=instance)\
+
+
+class Questionaire(models.Model):
+    user = models.ForeignKey(User, on_delete=CASCADE, related_name="anwser", null=True, default=None)
+    q1 = models.TextField()
+    prediction1 = models.FloatField()
+    q2 = models.TextField()
+    prediction2 = models.FloatField()
+    mean = models.FloatField()
+    prediction_date = models.DateTimeField(auto_now=True)

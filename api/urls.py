@@ -14,6 +14,7 @@ urlpatterns = [
     path("get-user/<int:pk>", views.get_user, name="get-user"),
     path("login", views.login, name="login"),
     path("get-logined", views.get_logined_user, name="get-logined-user"),
-    path("logout", views.logout, name="logout")
+    path("logout", views.logout, name="logout"),
+    path("analyse-question", views.analyseQuestion, name="question")
 ]
 

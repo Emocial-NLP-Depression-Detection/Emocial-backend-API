@@ -353,3 +353,32 @@ Vary: Accept
     "message": "success"
 }
 ```
+
+### Analyse Questionaire
+#### Notice: If the user is logged in result will automatically saved to database
+`POST /analyse-question/`
+```
+{
+    "q1": "man", 
+    "q2":"woman", 
+    "lang":"en"
+}
+```
+
+Response
+```
+HTTP 200 OK
+Allow: POST, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "id": 1,
+    "q1": "man",
+    "prediction1": 2.3708851415449317e-07,
+    "q2": "woman",
+    "prediction2": 2.2717343028944015e-07,
+    "mean": 2.3213097222196666e-07,
+    "user": 8
+}
+```
