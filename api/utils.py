@@ -86,10 +86,11 @@ class DepressClassifier:
         self.num_unique_words = len(self.counter)
         # Split dataset into training and validation set
         self.train_size = int(self.df.shape[0] * 0.8)
+        print(f"Tokenizing {self.lang} dataset...")
         self.tokenizer = Tokenizer(num_words=self.num_unique_words)
         self.train_df = self.df[:self.train_size]
         self.val_df = self.df[self.train_size:]
-
+        print(f"Done Tokenizing {self.lang} data.")
         # # split text and labels
         self.train_sentences = self.train_df.Tweets.to_numpy()
         self.train_labels = self.train_df.label.to_numpy()
@@ -164,8 +165,13 @@ class DepressClassifier:
         self.loadModel()
         self.predictedData = pd.DataFrame([])
         for line in list:
-            nline = line.replace(",", "").replace(".", "").replace("(", "").replace(
-                ")", "").replace(":", "").replace("\"", "").strip().split(" ")
+            if self.lang == "en":
+                nline = line.replace(",", "").replace(".", "").replace("(", "").replace(
+                    ")", "").replace(":", "").replace("\"", "").strip().split(" ")
+            elif self.lang == "th":
+                nline = line.replace(",", "").replace(".", "").replace("(", "").replace(
+                    ")", "").replace(":", "").replace("\"", "").strip()
+                nline = word_tokenize(nline)
             self.encode = self.review_encode(nline)
             self.encode = keras.preprocessing.sequence.pad_sequences(
                 [self.encode], padding="post", maxlen=20)  # make the data 250 words long
@@ -180,8 +186,13 @@ class DepressClassifier:
     def classifyText(self, text):
         
         self.loadModel()
-        nline = text.replace(",", "").replace(".", "").replace("(", "").replace(
-            ")", "").replace(":", "").replace("\"", "").strip().split(" ")
+        if self.lang == "en":
+            nline = text.replace(",", "").replace(".", "").replace("(", "").replace(
+                ")", "").replace(":", "").replace("\"", "").strip().split(" ")
+        elif self.lang == "th":
+            nline = text.replace(",", "").replace(".", "").replace("(", "").replace(
+                ")", "").replace(":", "").replace("\"", "").strip()
+            nline = word_tokenize(nline)
         self.encode = self.review_encode(nline)
         self.encode = keras.preprocessing.sequence.pad_sequences(
             [self.encode], padding="post", maxlen=20)  # make the data 250 words long
