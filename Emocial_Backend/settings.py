@@ -25,8 +25,13 @@ SECRET_KEY = 'blcz0y(c*=p#!lope%sz(-2g1x6w@krrcm7!g7j-i^+zgj+1ek'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = ['localhost']
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+]
 
 AUTH_USER_MODEL = "api.User"
 # Application definition
