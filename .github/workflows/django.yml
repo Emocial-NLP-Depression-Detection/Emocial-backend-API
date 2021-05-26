@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
@@ -39,6 +39,24 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: Run unittests
       run: |
         python manage.py test
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }} 
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} 
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build Container
+        run: |
+          docker build ./ -t 56548/emocial-api:latest
+      - name: docker push
+        run: |
+          docker push 56548/emocial-api:latest
