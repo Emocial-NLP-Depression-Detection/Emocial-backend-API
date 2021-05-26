@@ -1,4 +1,4 @@
-name: Docker push
+name: API test
 
 on:
   push
