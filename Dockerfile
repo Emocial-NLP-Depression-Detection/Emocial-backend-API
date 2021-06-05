@@ -13,4 +13,5 @@ COPY . code/
 WORKDIR /code/
 RUN /bin/bash -c "source activate ml && pip3 install -r requirements.txt"
 RUN /bin/bash -c "source activate ml && python3 manage.py migrate"
-CMD /bin/bash -c "source activate ml && python3 manage.py runserver 0.0.0.0:80"
+CMD /bin/bash -c "source activate ml && python3 manage.py runserver 0.0.0.0:8000"
+EXPOSE 8000
