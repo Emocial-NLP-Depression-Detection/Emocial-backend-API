@@ -11,6 +11,6 @@ RUN mkdir /code
 
 COPY . code/
 WORKDIR /code/
-RUN /bin/bash -c "source activate ml && pip install -r requirements.txt"
-RUN /bin/bash -c "source activate ml && python manage.py migrate"
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:80"]
+RUN /bin/bash -c "source activate ml && pip3 install -r requirements.txt"
+RUN /bin/bash -c "source activate ml && python3 manage.py migrate"
+CMD /bin/bash -c "source activate ml && python3 manage.py runserver 0.0.0.0:80"
