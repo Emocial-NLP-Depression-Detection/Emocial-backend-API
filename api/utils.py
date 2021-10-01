@@ -3,7 +3,7 @@
 # as the result of a search query.
 # -*- coding: utf-8 -*-
 
-
+from dotenv import load_dotenv
 import string
 import os
 from tensorflow.keras import layers
@@ -21,6 +21,7 @@ from nltk.corpus import stopwords
 from pythainlp.corpus import stopwords as stopwords_th
 from pythainlp.tokenize import word_tokenize
 
+load_dotenv()
 
 def init():
     nltk.download('punkt')
@@ -205,10 +206,10 @@ class DepressClassifier:
 
 class TweetCaller:
     def __init__(self, lang):
-        self.consumerkey = 'WLfzlzZ1ElU5ZlBtBpnttn1xt'
-        self.consumersecret = '7RtI8JBF3aetK80Uqoil7dfMTyF5trXGQHyMKKHmSyzGXAnNO8'
-        self.accesstoken = '1015944194966208512-rDnvf27WpOphOYl7yhwulKeLVncYAK'
-        self.accesstokensecret = 'LOQ8x9p4hfABEQ44xfSV2vrPV7ooqMlGcI9Ld0fMjkLPO'
+        self.consumerkey = os.getenv("TWITTER_CONSUMER_KEY")
+        self.consumersecret = os.getenv("TWITTER_CONSUMER_SECRET")
+        self.accesstoken = os.getenv("TWITTER_ACCESS_TOKEN")
+        self.accesstokensecret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
         self.auth = tweepy.OAuthHandler(self.consumerkey, self.consumersecret)
         self.auth.set_access_token(self.accesstoken, self.accesstokensecret)
         self.lang = lang
