@@ -22,11 +22,11 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       env:
-          TWITTER_CONSUMER_KEY: HEYyPEXGQsfBVLKK6hI2SfFdr
-          TWITTER_CONSUMER_SECRET: xsoBXVl1WY2RBIsirbxgLQgvri9E9gG9iHfiUUB7HNAv4gRJhc
-          TWITTER_ACCESS_TOKEN: 1015944194966208512-0XLPaLKQRhtAZUHEPn9ZRLeRB2jAR4
-          TWITTER_ACCESS_TOKEN_SECRET: sJsJaQDbfje2lv8hUcPbdkfZnWrmY6a4zouaf9JzWtF04
-          DJANGO_SECRET: wxv4i+6#1ckg_vg__q&jd1rsn*#ofsdxazzld5gfb013(^la-o
+          TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }} 
+          TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }} 
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }} 
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} 
+          DJANGO_SECRET: ${{ secrets.DJANGO_SECRET }} 
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
@@ -41,17 +41,23 @@ jobs:
         python manage.py migrate
     - name: Lint with flake8
       env:
-          TWITTER_CONSUMER_KEY: HEYyPEXGQsfBVLKK6hI2SfFdr
-          TWITTER_CONSUMER_SECRET: xsoBXVl1WY2RBIsirbxgLQgvri9E9gG9iHfiUUB7HNAv4gRJhc
-          TWITTER_ACCESS_TOKEN: 1015944194966208512-0XLPaLKQRhtAZUHEPn9ZRLeRB2jAR4
-          TWITTER_ACCESS_TOKEN_SECRET: sJsJaQDbfje2lv8hUcPbdkfZnWrmY6a4zouaf9JzWtF04
-          DJANGO_SECRET: wxv4i+6#1ckg_vg__q&jd1rsn*#ofsdxazzld5gfb013(^la-o
+          TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }} 
+          TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }} 
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }} 
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} 
+          DJANGO_SECRET: ${{ secrets.DJANGO_SECRET }} 
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run unittests
+      env:
+            TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }} 
+            TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }} 
+            TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }} 
+            TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} 
+            DJANGO_SECRET: ${{ secrets.DJANGO_SECRET }} 
       run: |
         python manage.py test
         
@@ -62,20 +68,25 @@ jobs:
       - uses: actions/checkout@v2
       - name: docker login
         env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }} 
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} 
+            TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }} 
+            TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }} 
+            TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }} 
+            TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} 
+            DJANGO_SECRET: ${{ secrets.DJANGO_SECRET }} 
+            DOCKER_USER: ${{ secrets.DOCKER_USER }} 
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} 
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build Container
         env:
-          TWITTER_CONSUMER_KEY: HEYyPEXGQsfBVLKK6hI2SfFdr
-          TWITTER_CONSUMER_SECRET: xsoBXVl1WY2RBIsirbxgLQgvri9E9gG9iHfiUUB7HNAv4gRJhc
-          TWITTER_ACCESS_TOKEN: 1015944194966208512-0XLPaLKQRhtAZUHEPn9ZRLeRB2jAR4
-          TWITTER_ACCESS_TOKEN_SECRET: sJsJaQDbfje2lv8hUcPbdkfZnWrmY6a4zouaf9JzWtF04
-          DJANGO_SECRET: wxv4i+6#1ckg_vg__q&jd1rsn*#ofsdxazzld5gfb013(^la-o
+          TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }} 
+          TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }} 
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }} 
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} 
+          DJANGO_SECRET: ${{ secrets.DJANGO_SECRET }} 
         run: |
-          docker build ./ -t 56548/emocial-api:latest
+          docker build ./ -t 56548/emocial-api:latest --build-arg TWITTER_CONSUMER_KEY=${{ secrets.TWITTER_CONSUMER_KEY }} --build-arg TWITTER_CONSUMER_SECRET=${{ secrets.TWITTER_CONSUMER_SECRET }} --build-arg TWITTER_ACCESS_TOKEN=${{ secrets.TWITTER_ACCESS_TOKEN }} --build-arg TWITTER_ACCESS_TOKEN_SECRET=${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} --build-arg DJANGO_SECRET=${{ secrets.DJANGO_SECRET }} 
       - name: docker push
         run: |
           docker push 56548/emocial-api:latest
