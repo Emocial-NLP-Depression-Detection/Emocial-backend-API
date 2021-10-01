@@ -86,7 +86,7 @@ jobs:
           TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} 
           DJANGO_SECRET: ${{ secrets.DJANGO_SECRET }} 
         run: |
-          docker build ./ -t 56548/emocial-api:latest --build-arg TWITTER_CONSUMER_KEY=${{ secrets.TWITTER_CONSUMER_KEY }} --build-arg TWITTER_CONSUMER_SECRET=${{ secrets.TWITTER_CONSUMER_SECRET }} --build-arg TWITTER_ACCESS_TOKEN=${{ secrets.TWITTER_ACCESS_TOKEN }} --build-arg TWITTER_ACCESS_TOKEN_SECRET=${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} --build-arg DJANGO_SECRET=${{ secrets.DJANGO_SECRET }} 
+          docker build ./ -t 56548/emocial-api:latest --build-arg 'TWITTER_CONSUMER_KEY=${{ secrets.TWITTER_CONSUMER_KEY }}' --build-arg 'TWITTER_CONSUMER_SECRET=${{ secrets.TWITTER_CONSUMER_SECRET }}' --build-arg 'TWITTER_ACCESS_TOKEN=${{ secrets.TWITTER_ACCESS_TOKEN }}' --build-arg 'TWITTER_ACCESS_TOKEN_SECRET=${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}' --build-arg 'DJANGO_SECRET=${{ secrets.DJANGO_SECRET }}' 
       - name: docker push
         run: |
           docker push 56548/emocial-api:latest
